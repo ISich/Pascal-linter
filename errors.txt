@@ -1,0 +1,5 @@
+Empty string error in 1 line
+Empty string error in 2 line
+Tab error in 6 line
+Space error in 6 line 62 pos by element +
+6 line in too large: 69 > 50

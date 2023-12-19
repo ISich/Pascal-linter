@@ -1,0 +1,8 @@
+
+
+Program aaaa;
+begin
+
+writeln('sfs                                                  +wr');
+
+end
