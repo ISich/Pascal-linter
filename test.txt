@@ -1,9 +1,5 @@
-
-
 Program aaa;
 begin
-
-
 
 writeln(1 +        2);
 

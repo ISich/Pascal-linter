@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 from tkinter import *
+from tkinter.filedialog import *
 from Linter import *
 
 class Menu():
     def __init__(self):
         self.window = Tk()
-        self.menu(self.window)
-        self.mainloop(self.window)
+        self.file_path = "test.txt"
         self.string_len = int()
         self.empty_lines = int()
         self.tabs_count = int()
+        self.menu(self.window)
+        self.mainloop(self.window)
 
     def menu(self, window):
         window.resizable(False, False)
@@ -51,9 +53,23 @@ class Menu():
         label3_2.pack(side='left')
 
         result_button = Button(window, text="Result", font=("Roboto", 14), width=16,
-                               command=lambda: self.__do_result(entry1.get(), entry2.get(), entry3.get()))
-        result_button.pack(side=TOP, pady=10)
+        command=lambda: self.__do_result(entry1.get(), entry2.get(), entry3.get()))
+        result_button.pack(side=BOTTOM, pady=10)
 
+        btn_file = Button(window, text="Choose_file", font=("Roboto", 8), width=10,
+                               command= self.__choose_file)
+        btn_file.pack(side=BOTTOM, pady=10)
+
+
+    def __choose_file(self):
+        filetypes = (("Текстовый файл", "*.txt"),
+                     ("Pascal", "*.pas"))
+        filename = askopenfilename(title="Открыть файл", initialdir="/",
+                                      filetypes=filetypes)
+        if filename:
+            self.file_path = filename
+            return True
+        return False
 
     def __check_entry_len(self, value):
         if value.isdigit():
@@ -82,7 +98,7 @@ class Menu():
     def __do_result(self, string_len, empty_lines, tabs_count):
         if self.__check_entry_len(string_len) and self.__check_entry_lines(empty_lines) \
                 and self.__check_entry_tabs(tabs_count):
-            linter_main(self.string_len, self.empty_lines, self.tabs_count)
+            linter_main(self.file_path, self.string_len, self.empty_lines, self.tabs_count)
             self.close_window(self.window)
 
         else:

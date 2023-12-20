@@ -10,7 +10,7 @@ def check_tabs(file_path, err, tabs):
         if line.strip() == "begin":
             line0 = "    " * tab_count + "begin"
             tab_count += tabs
-        elif line.strip() == "end":
+        elif line.strip() == "end" or line.strip() == "end.":
             tab_count -= tabs
             line0 = "    " * tab_count + "end"
         else:
@@ -100,9 +100,8 @@ def check_line_len(line, max_len):
     return False
 
 
-def linter_main(max_len_string, empty_lines, tabs_count):
+def linter_main(file_name, max_len_string, empty_lines, tabs_count):
     space_elements = ['+', '-', '*', '/', '=']
-    file_name = "test.txt"
     err = open("errors.txt", "w")
     check_empty_lines(file_name, err, 2, empty_lines)
     check_tabs(file_name, err, tabs_count)

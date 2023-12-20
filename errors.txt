@@ -1,5 +1,2 @@
-Empty string error in 1 line
-Empty string error in 2 line
-Empty string error in 5 line
-Empty string error in 6 line
-Tab error in 8 line
+Tab error in 3 line
+Tab error in 4 line
