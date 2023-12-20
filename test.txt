@@ -1,8 +1,10 @@
 
 
-Program aaaa;
+Program aaa;
 begin
 
-writeln('sfs                                                  +wr');
+
+
+writeln(1 +        2);
 
 end
