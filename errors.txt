@@ -1,2 +1,4 @@
-Tab error in 3 line
-Tab error in 4 line
+Empty string error in 3 line
+Tab error in 5 line
+Space error in 5 line 9 pos by element +
+5 line in too large: 66 > 30

@@ -100,9 +100,28 @@ class Menu():
                 and self.__check_entry_tabs(tabs_count):
             linter_main(self.file_path, self.string_len, self.empty_lines, self.tabs_count)
             self.close_window(self.window)
-
+            self.__show_res()
         else:
             return
+
+    def __show_res(self):
+        root = Tk()
+        root.title("Errors")
+        #root.geometry("400x400")
+
+        text_widget = Text(root, height=10, width=50)
+        text_widget.pack(side="left", fill="y")
+
+        scrollbar = Scrollbar(root)
+        scrollbar.pack(side="right", fill="y")
+        text_widget.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=text_widget.yview)
+
+        # Добавление примера текста
+        example_text = "".join(open("errors.txt", "r").readlines())
+        text_widget.insert(END, example_text)
+
+        self.mainloop(root)
 
     def mainloop(self, window):
         window.mainloop()

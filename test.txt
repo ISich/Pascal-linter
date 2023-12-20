@@ -1,6 +1,7 @@
 Program aaa;
 begin
 
-writeln(1 +        2);
+
+writeln(1+        2)                                            ;
 
 end
