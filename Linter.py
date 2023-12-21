@@ -1,4 +1,4 @@
-def check_tabs(file_path, err, tabs):
+def check_tabs(file_path, err, block_lines, tabs):
     with open(file_path, 'r') as file:
         lines = file.readlines()
     tab_count = 0
@@ -21,13 +21,13 @@ def check_tabs(file_path, err, tabs):
                 else:
                     st += 1
             line0 = "    " * tab_count + line[st:]
-        if line != line0 and len(line.strip()) != 0:
+        if line != line0 and len(line.strip()) != 0 and ind + 1 not in block_lines:
             err.write(f"Tab error in {ind+1} line\n")
 
         ind += 1
 
 
-def check_empty_lines(file_path, err, between_func, posible):
+def check_empty_lines(file_path, err, block_lines, between_func, posible):
     with open(file_path, 'r') as file:
         lines = file.readlines()
     cur_emt = 0
@@ -42,10 +42,12 @@ def check_empty_lines(file_path, err, between_func, posible):
         else:
             if empty and cur_emt != 0:
                 for i in range(cur_emt):
-                    err.write(f"Empty string error in {i+1} line\n")
+                    if i + 1 not in block_lines:
+                        err.write(f"Empty string error in {i+1} line\n")
             elif cur_emt > posible:
                 for i in range(cur_emt - posible):
-                    err.write(f"Empty string error in {ind-cur_emt+i+1} line\n")
+                    if ind-cur_emt+i+1 not in block_lines:
+                        err.write(f"Empty string error in {ind-cur_emt+i+1} line\n")
             cur_emt = 0
             empty = False
 
@@ -53,7 +55,8 @@ def check_empty_lines(file_path, err, between_func, posible):
     if lines[-1][-1] == '\n':
         cur_emt += 1
     for i in range(cur_emt):
-        err.write(f"Empty string error in {len(lines)-cur_emt+i+2} line\n")
+        if len(lines)-cur_emt+i+2 not in block_lines:
+            err.write(f"Empty string error in {len(lines)-cur_emt+i+2} line\n")
 
 
 def check_space_line(line, space_el):
@@ -71,7 +74,7 @@ def check_space_line(line, space_el):
     return res
 
 
-def check_space(file_path, err, space_elements):
+def check_space(file_path, err, block_lines, space_elements):
     with open(file_path, 'r') as file:
         lines = file.readlines()
     ind = 0
@@ -79,10 +82,11 @@ def check_space(file_path, err, space_elements):
         ind += 1
         line_err = check_space_line(line, space_elements)
         for error in line_err:
-            err.write(f"Space error in {ind} line {error} pos by element {line[error]}\n")
+            if ind not in block_lines:
+                err.write(f"Space error in {ind} line {error} pos by element {line[error]}\n")
 
 
-def check_lines_len(file_path, err, max_len):
+def check_lines_len(file_path, err, block_lines, max_len):
     with open(file_path, 'r') as file:
         lines = file.readlines()
     ind = 0
@@ -91,7 +95,8 @@ def check_lines_len(file_path, err, max_len):
         if line.strip() == 0:
             continue
         if check_line_len(line, max_len):
-            err.write(f"{ind} line in too large: {len(line)} > {max_len}\n")
+            if ind not in block_lines:
+                err.write(f"{ind} line in too large: {len(line)} > {max_len}\n")
 
 
 def check_line_len(line, max_len):
@@ -99,11 +104,11 @@ def check_line_len(line, max_len):
         return True
     return False
 
-
-def linter_main(file_name, max_len_string, empty_lines, tabs_count):
+def linter_main(block_lines, file_name, max_len_string, empty_lines, tabs_count):
     space_elements = ['+', '-', '*', '/', '=']
     err = open("errors.txt", "w")
-    check_empty_lines(file_name, err, 2, empty_lines)
-    check_tabs(file_name, err, tabs_count)
-    check_space(file_name, err, space_elements)
-    check_lines_len(file_name, err, max_len_string)
+    err.write(f"Block lines is: {' '.join([str(i) for i in block_lines])}\n")
+    check_empty_lines(file_name, err, block_lines, 2, empty_lines)
+    check_tabs(file_name, err, block_lines, tabs_count)
+    check_space(file_name, err, block_lines, space_elements)
+    check_lines_len(file_name, err, block_lines, max_len_string)
