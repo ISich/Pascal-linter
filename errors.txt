@@ -1,4 +1,5 @@
-Block lines is: 3
-Tab error in 5 line
-Space error in 5 line 9 pos by element +
-5 line in too large: 66 > 30
+Block lines is: 
+Tab error in 4 line
+Space in too much in 4 line
+Space error in 4 line 9 pos by element ,
+4 line in too large: 69 > 50

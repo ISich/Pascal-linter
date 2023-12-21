@@ -10,6 +10,7 @@ class Menu():
         self.string_len = int()
         self.empty_lines = int()
         self.tabs_count = int()
+        self.max_space = int()
         self.block_symbols = list()
         self.menu(self.window)
         self.mainloop(self.window)
@@ -28,7 +29,7 @@ class Menu():
         label1_1 = Label(frame1, text="Max string len: ")
         label1_1.pack(side='left')
         entry1 = Entry(frame1, width=8)
-        entry1.insert(END, 30)
+        entry1.insert(END, 50)
         entry1.pack(side='left', fill='x')
         #label1_2 = Label(frame1, text="Текст 1.2")
         #label1_2.pack(side='left')
@@ -53,6 +54,16 @@ class Menu():
         #label3_2 = Label(frame3, text="Текст 1.2")
         #label3_2.pack(side='left')
 
+        frame4 = Frame(window)
+        frame4.pack(fill='x', padx=5, pady=5)
+        label4_1 = Label(frame4, text="Max space count: ")
+        label4_1.pack(side='left')
+        entry4 = Entry(frame4, width=8)
+        entry4.insert(END, 1)
+        entry4.pack(side='left', fill='x')
+        # label3_2 = Label(frame3, text="Текст 1.2")
+        # label3_2.pack(side='left')
+
         framel1 = Frame(window)
         framel1.pack(fill='x', padx=5, pady=5)
         labell1 = Label(framel1, text="Dont checking lines(write from space):")
@@ -64,7 +75,7 @@ class Menu():
         entryblock.pack(side='left', fill='x')
 
         result_button = Button(window, text="Result", font=("Roboto", 14), width=16,
-        command=lambda: self.__do_result(entryblock.get(), entry1.get(), entry2.get(), entry3.get()))
+        command=lambda: self.__do_result(entryblock.get(), entry1.get(), entry2.get(), entry3.get(), entry4.get()))
         result_button.pack(side=BOTTOM, pady=10)
 
         btn_file = Button(window, text="Choose_file", font=("Roboto", 8), width=10,
@@ -119,10 +130,21 @@ class Menu():
         self.block_symbols = value.copy()
         return res
 
-    def __do_result(self, block_lines, string_len, empty_lines, tabs_count):
+
+    def __check_max_spece(self, value):
+        if value.isdigit():
+            value = int(value)
+            if value >= 0:
+                self.max_space = int(value)
+                return True
+        return False
+
+    def __do_result(self, block_lines, string_len, empty_lines, tabs_count, space_count):
         if self.__check_entry_len(string_len) and self.__check_entry_lines(empty_lines) \
-                and self.__check_entry_tabs(tabs_count) and self.__check_block_symbols(block_lines):
-            linter_main(self.block_symbols, self.file_path, self.string_len, self.empty_lines, self.tabs_count)
+                and self.__check_entry_tabs(tabs_count) and self.__check_block_symbols(block_lines)\
+                and self.__check_max_spece(space_count):
+            linter_main(self.block_symbols, self.file_path, self.string_len, self.empty_lines, self.tabs_count,
+                        self.max_space)
             self.close_window(self.window)
             self.__show_res()
         else:

@@ -12,7 +12,7 @@ def check_tabs(file_path, err, block_lines, tabs):
             tab_count += tabs
         elif line.strip() == "end" or line.strip() == "end.":
             tab_count -= tabs
-            line0 = "    " * tab_count + "end"
+            line0 = "    " * tab_count + line.strip()
         else:
             st = 0
             for el in line:
@@ -59,28 +59,46 @@ def check_empty_lines(file_path, err, block_lines, between_func, posible):
             err.write(f"Empty string error in {len(lines)-cur_emt+i+2} line\n")
 
 
-def check_space_line(line, space_el):
+def check_space_line(line, space_el, l_s = [], r_s = [',']):
     res = []
     for i in range(len(line)):
         if line[i] in space_el:
             if i != 0:
                 if line[i - 1] != " ":
                     res.append(i)
-                    continue
             if i != len(line) - 1:
                 if line[i + 1] != " ":
                     res.append(i)
-                    continue
+        if line[i] in l_s:
+            if i != 0:
+                if line[i - 1] != " ":
+                    res.append(i)
+        if line[i] in r_s:
+            if i != len(line) - 1:
+                if line[i + 1] != " ":
+                    res.append(i)
     return res
 
 
-def check_space(file_path, err, block_lines, space_elements):
+def check_max_spaces(line, err, max_spaces):
+    for i in range(len(line)):
+        if line[i] != " ":
+            break
+    if " " * (max_spaces + 1) in line[i:]:
+        return True
+    return False
+
+
+
+def check_space(file_path, err, block_lines, max_space, space_elements):
     with open(file_path, 'r') as file:
         lines = file.readlines()
     ind = 0
     for line in lines:
         ind += 1
         line_err = check_space_line(line, space_elements)
+        if check_max_spaces(line, err, max_space):
+            err.write(f"Space in too much in {ind} line\n")
         for error in line_err:
             if ind not in block_lines:
                 err.write(f"Space error in {ind} line {error} pos by element {line[error]}\n")
@@ -104,11 +122,12 @@ def check_line_len(line, max_len):
         return True
     return False
 
-def linter_main(block_lines, file_name, max_len_string, empty_lines, tabs_count):
+
+def linter_main(block_lines, file_name, max_len_string, empty_lines, tabs_count, max_space):
     space_elements = ['+', '-', '*', '/', '=']
     err = open("errors.txt", "w")
     err.write(f"Block lines is: {' '.join([str(i) for i in block_lines])}\n")
     check_empty_lines(file_name, err, block_lines, 2, empty_lines)
     check_tabs(file_name, err, block_lines, tabs_count)
-    check_space(file_name, err, block_lines, space_elements)
+    check_space(file_name, err, block_lines, max_space, space_elements)
     check_lines_len(file_name, err, block_lines, max_len_string)
