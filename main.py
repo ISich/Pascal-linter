@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Menu import Menu
 
+
 def main():
     menu = Menu()
 

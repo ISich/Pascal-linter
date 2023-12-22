@@ -1,3 +1,6 @@
+import re
+
+
 def check_tabs(file_path, err, block_lines, tabs):
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -10,7 +13,7 @@ def check_tabs(file_path, err, block_lines, tabs):
         if line.strip() == "begin":
             line0 = "    " * tab_count + "begin"
             tab_count += tabs
-        elif line.strip() == "end" or line.strip() == "end.":
+        elif line.strip() == "end" or line.strip() == "end." or line.strip() == "end;":
             tab_count -= tabs
             line0 = "    " * tab_count + line.strip()
         else:
@@ -123,11 +126,42 @@ def check_line_len(line, max_len):
     return False
 
 
-def linter_main(block_lines, file_name, max_len_string, empty_lines, tabs_count, max_space):
-    space_elements = ['+', '-', '*', '/', '=']
+def check_identificators(file_path, err, block_lines):
+    camel_case_pattern = r'^[A-Za-z][a-zA-Z0-9]*$'
+    identifiers_pattern = r'\b[a-zA-Z]+\w*\b'
+    keywords = [
+    'and', 'array', 'begin', 'case', 'const', 'div', 'do', 'downto', 'else',
+    'end', 'file', 'for', 'function', 'goto', 'if', 'in', 'label', 'mod', 'nil',
+    'not', 'of', 'or', 'packed', 'procedure', 'program', 'record', 'repeat',
+    'set', 'then', 'to', 'type', 'unit', 'until', 'uses', 'var', 'while', 'with'
+    ]
+    error_string = ''
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+    for line_index, line in enumerate(lines):
+        identifiers = re.findall(identifiers_pattern, line)
+        for ident in identifiers:
+            if not re.match(camel_case_pattern, ident) and ident not in keywords:
+                error_string += f"incorrect identifier name {ident} (not in CamelCase)\n"
+        if line_index not in block_lines:
+            err.write(error_string)
+        error_string = ''
+
+
+def linter_main(block_lines, file_name,
+                max_len_string, use_max_len,
+                empty_lines, use_empty_count,
+                tabs_count, use_tabs_count,
+                max_space, use_max_space):
+    space_elements = ['+', '-', '*', '/']
     err = open("errors.txt", "w")
     err.write(f"Block lines is: {' '.join([str(i) for i in block_lines])}\n")
-    check_empty_lines(file_name, err, block_lines, 2, empty_lines)
-    check_tabs(file_name, err, block_lines, tabs_count)
-    check_space(file_name, err, block_lines, max_space, space_elements)
-    check_lines_len(file_name, err, block_lines, max_len_string)
+    if use_empty_count:
+        check_empty_lines(file_name, err, block_lines, 2, empty_lines)
+    if use_tabs_count:
+        check_tabs(file_name, err, block_lines, tabs_count)
+    if use_max_space:
+        check_space(file_name, err, block_lines, max_space, space_elements)
+    if use_max_len:
+        check_lines_len(file_name, err, block_lines, max_len_string)
+    check_identificators(file_name, err, block_lines)
