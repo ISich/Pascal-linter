@@ -67,13 +67,10 @@ def immitate_readlines(st):
     return splitted
 
 
-# get_result('''var n,    p1,p2:integer;''', 1)
+# get_result('''var n,    p1,p2:integer;''', 1, [])
 
 
-print(check_space_line('''var a: int;
-a := 3+ 1 *5 - 2/ 5;
-''', ['+', '-', '*', '/']))
-
+print(check_max_spaces("if (a != (b + c))", 1))
 
 """var n,p1,p2,p3,p4:integer;    
 begin

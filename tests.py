@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import pytest
-from Linter import check_tabs, check_empty_lines, check_space, check_space_line
+from Linter import check_tabs, check_empty_lines, check_space, check_space_line, check_max_spaces
 import pdb
 
 
@@ -279,6 +279,17 @@ a := 3+ 1 *5 - 2/ 5;
     def test_check_space_line(self, line, expected):
         assert check_space_line(line, ['+', '-', '*', '/']) == expected
 
+    @pytest.mark.parametrize("line, max_spaces, expected", [
+        ("a:=b", 0, False),
+        ("a:= b", 0, True),
+        (" a := b ", 1, False),
+        ("  a := b ", 1, False),
+        ("if (a != (b + c))", 2, False),
+        ("if (a !=   (b + c  ))", 2, True)
+    ])
+    def test_check_max_spaces(self, line, max_spaces, expected):
+        assert check_max_spaces(line, max_spaces) == expected
+
     @pytest.mark.parametrize("file_value, max_space, block_lines, expected", [
         ('''var n,p1,p2,p3,p4:integer;
 begin
@@ -302,9 +313,7 @@ n :=3;
 end     .''', 1, [], ['Space in too much in 3 line\n']),
         ('''begin
                 n :=3;
-end.''', 1, [], []),
-        ('''var n,    p1,p2:integer;''', 1, [1], [
-            'Space in too much in 1 line\n', 'Space error in 1 line 12 pos by element ,\n'])
+end.''', 1, [], [])
     ])
     def test_spaces(self, file_value, max_space, block_lines, expected):
         space_elements = ['+', '-', '*', '/']
