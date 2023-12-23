@@ -16,8 +16,8 @@ class TestCheckTabs:
 
     @pytest.mark.parametrize("file_value, tabs_count, expected", [
         ("Program a", 1, []),
-        ("      a := 12", 2, ['file_path: Tab error in 1 line\n']),
-        (" b:= 3", 4, ['file_path: Tab error in 1 line\n'])
+        ("      a := 12", 2, ['Tab error in 1 line\n']),
+        (" b:= 3", 4, ['Tab error in 1 line\n'])
     ])
     def test_on_single_line(self, file_value, expected, tabs_count):
         assert HelperTestingMethods.test_func(
@@ -36,8 +36,8 @@ Begin
       end;
   Writeln('MIN=',Min);
 end.''', 2,
-         ['file_path: Tab error in 3 line\n', 'file_path: Tab error in 4 line\n', 'file_path: Tab error in 7 line\n', 'file_path: Tab error \
-in 8 line\n', 'file_path: Tab error in 9 line\n', 'file_path: Tab error in 10 line\n', 'file_path: Tab error in 11 line\n']),
+         ['Tab error in 3 line\n', 'Tab error in 4 line\n', 'Tab error in 7 line\n', 'Tab error \
+in 8 line\n', 'Tab error in 9 line\n', 'Tab error in 10 line\n', 'Tab error in 11 line\n']),
 
         ('''var n,i,k,a:integer;
 begin
@@ -51,12 +51,12 @@ for i:=1 to n do begin
                  end;
 writeln('кол-во четных чисел ',k);
 readln;
-end.''', 4, ['file_path: Tab error in 3 line\n', 'file_path: Tab error in 4 line\n', 'file_path: Tab error in 5 line\n', 'file_path: Tab error \
-in 6 line\n', 'file_path: Tab error in 7 line\n', 'file_path: Tab error in 8 line\n', 'file_path: Tab error in 9 line\n', 'file_path: Tab error in 10 line\n']),
+end.''', 4, ['Tab error in 3 line\n', 'Tab error in 4 line\n', 'Tab error in 5 line\n', 'Tab error \
+in 6 line\n', 'Tab error in 7 line\n', 'Tab error in 8 line\n', 'Tab error in 9 line\n', 'Tab error in 10 line\n']),
         ('''var n,p1,p2,p3,p4:integer;
 begin
 readln;
-end.''', 1, ['file_path: Tab error in 3 line\n']),
+end.''', 1, ['Tab error in 3 line\n']),
         ('''var n,p1,p2,p3,p4:integer;
 begin
 readln;
@@ -71,8 +71,8 @@ begin
   begin
     p1 := 4
   end
-end.''', 2, ['file_path: Tab error in 4 line\n', 'file_path: Tab error in 5 line\n', 'file_path: Tab error in 6 line\n', 'file_path: Tab error \
-in 8 line\n', 'file_path: Tab error in 9 line\n', 'file_path: Tab error in 10 line\n']),
+end.''', 2, ['Tab error in 4 line\n', 'Tab error in 5 line\n', 'Tab error in 6 line\n', 'Tab error \
+in 8 line\n', 'Tab error in 9 line\n', 'Tab error in 10 line\n']),
         ('''var n,p1,p2,p3,p4:integer;
 begin
     readln;
@@ -100,7 +100,7 @@ readln;
   begin
     p1 := 4
   end
-end.''', 1, [3], ['file_path: Tab error in 7 line\n', 'file_path: Tab error in 8 line\n', 'file_path: Tab error in 9 line\n', 'file_path: Tab error \
+end.''', 1, [3], ['Tab error in 7 line\n', 'Tab error in 8 line\n', 'Tab error in 9 line\n', 'Tab error \
 in 10 line\n']),
         ('''var n,i,k,a:integer;
 begin
@@ -127,7 +127,7 @@ begin
                  end;
 writeln('кол-во четных чисел ',k);
 readln;
-end.''', 4, [4, 5, 7, 8], ['file_path: Tab error in 6 line\n', 'file_path: Tab error in 9 line\n', 'file_path: Tab error in 10 line\n'])
+end.''', 4, [4, 5, 7, 8], ['Tab error in 6 line\n', 'Tab error in 9 line\n', 'Tab error in 10 line\n'])
     ])
     def test_with_blocking_lines(self, file_value, tabs_count, block_lines, expected):
         assert HelperTestingMethods.test_func(
@@ -141,7 +141,7 @@ class TestCheskEmptyLines:
                    
 begin
 readln;
-end.''', 1, [], ['file_path: Empty string error in 2 line\n']),
+end.''', 1, [], ['Empty string error in 2 line\n']),
         ('''
 
 var n,p1,p2,p3,p4:integer;          
@@ -154,7 +154,7 @@ readln;
   begin
     p1 := 4
   end
-end.''', 0, [], ['file_path: Empty string error in 1 line\n', 'file_path: Empty string error in 2 line\n']),
+end.''', 0, [], ['Empty string error in 1 line\n', 'Empty string error in 2 line\n']),
         ('''
 var n,p1,p2,p3,p4:integer;          
 begin
@@ -166,7 +166,7 @@ readln;
   begin
     p1 := 4
   end
-end.''', 0, [], ['file_path: Empty string error in 1 line\n']),
+end.''', 0, [], ['Empty string error in 1 line\n']),
         ('''var n,p1,p2,p3,p4:integer;          
 begin
            
@@ -198,7 +198,7 @@ readln;
            
 
   end
-end.''', 1, [], ['file_path: Empty string error in 8 line\n', 'file_path: Empty string error in 9 line\n', 'file_path: Empty string error in 14 line\n']),
+end.''', 1, [], ['Empty string error in 8 line\n', 'Empty string error in 9 line\n', 'Empty string error in 14 line\n']),
         ('''var n,p1,p2,p3,p4:integer;          
 begin         
 
@@ -206,13 +206,13 @@ begin
 
 
 
-end.''', 3, [], ['file_path: Empty string error in 3 line\n', 'file_path: Empty string error in 4 line\n']),
+end.''', 3, [], ['Empty string error in 3 line\n', 'Empty string error in 4 line\n']),
         ('''var n,p1,p2,p3,p4:integer;
 
                    
 begin
 readln;
-end.''', 1, [1, 3], ['file_path: Empty string error in 2 line\n']),
+end.''', 1, [1, 3], ['Empty string error in 2 line\n']),
         ('''var n,p1,p2,p3,p4:integer;
 
                    
@@ -237,7 +237,7 @@ readln;
   begin
     p1 := 4
   end
-end.''', 0, [1], ['file_path: Empty string error in 2 line\n']),
+end.''', 0, [1], ['Empty string error in 2 line\n']),
         ('''
 
 var n,p1,p2,p3,p4:integer;          
@@ -255,8 +255,6 @@ end.''', 0, [1, 2, 3, 4, 5], [])
     def test_empty_lines(self, file_value, possible, block_lines, expected):
         assert HelperTestingMethods.test_func(
             check_empty_lines, file_value, 'file_path', block_lines, "", possible) == expected
-        
-
 
 
 class HelperTestingMethods:
