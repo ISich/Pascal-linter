@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import pytest
-from Linter import check_tabs, check_empty_lines, check_space, check_space_line, check_max_spaces
+from Linter import check_tabs, check_empty_lines, check_space, check_space_line, check_max_spaces, check_lines_len
+from Linter import check_line_len, check_identificators
 import pdb
 
 
@@ -319,6 +320,55 @@ end.''', 1, [], [])
         space_elements = ['+', '-', '*', '/']
         assert HelperTestingMethods.test_func(
             check_space, file_value, 'file_path', block_lines, max_space, space_elements) == expected
+
+
+class TestCheckLinesLen:
+    @pytest.mark.parametrize('line, max_len, expected', [
+        ('a', 1, False),
+        ('aa', 1, True),
+        ('  ', 2, False),
+        ('abcd   ', 7, False),
+        ('aeddfbcd   ', 7, True)
+    ])
+    def test_check_line_len(self, line, max_len, expected):
+        assert check_line_len(line, max_len) == expected
+
+    @pytest.mark.parametrize("file_value, max_len, block_lines, expected", [
+        ('''Program aboba
+begin
+    readln;
+end.''', 15, [], []),
+        ('''Program aboba
+begin
+    readln    ;
+end.''', 15, [], ['3 line in too large: 16 > 15\n']),
+        ('''Program aboba
+begin
+    readln    ;
+end               .''', 15, [], ['3 line in too large: 16 > 15\n', '4 line in too large: 19 > 15\n']),
+        ('''''', 15, [], [])
+    ])
+    def test_check_lines_len(self, file_value, max_len, block_lines, expected):
+        assert HelperTestingMethods.test_func(
+            check_lines_len, file_value, 'file_path', block_lines, max_len) == expected
+
+
+class TestCheckIdentificators:
+
+    @pytest.mark.parametrize("file_value, block_lines, expected", [
+        ('''var a:array[1..n] of integer;
+    i,j,x:integer;''', [], []),
+        ('''var a_:array[1..n] of integer;
+    i,j,x:integer;''', [], ['incorrect identifier name a_ (not in CamelCase)\n']),
+        ('''var a_:array[1..n] of integer;
+    i_notCC,j,x:integer;''', [], ['incorrect identifier name a_ (not in CamelCase)\n', 'incorrect identifier name i_notCC (not in CamelCase)\n']),
+        ('''''', [], []),
+        ('''CamelCased :=not_cCcC''', [], [
+         'incorrect identifier name not_cCcC (not in CamelCase)\n'])
+    ])
+    def test_check_lines_len(self, file_value, block_lines, expected):
+        assert HelperTestingMethods.test_func(
+            check_identificators, file_value, 'file_path', block_lines) == expected
 
 
 class HelperTestingMethods:

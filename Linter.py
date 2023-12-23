@@ -156,7 +156,8 @@ def check_identificators(file_path, block_lines):
             if not re.match(camel_case_pattern, ident) and ident not in keywords:
                 error_string += f"incorrect identifier name {ident} (not in CamelCase)\n"
         if line_index not in block_lines:
-            errors.append(error_string)
+            if error_string != '':
+                errors.append(error_string)
         error_string = ''
     return errors
 

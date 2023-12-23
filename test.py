@@ -1,56 +1,35 @@
 from tkinter import *
 from tkinter.filedialog import *
 import os
+import re
 
 
-def check_space_line(line, space_el, l_s=[], r_s=[',']):
-    res = []
-    for i in range(len(line)):
-        if line[i] in space_el:
-            if i != 0:
-                if line[i - 1] != " ":
-                    res.append(i)
-            if i != len(line) - 1:
-                if line[i + 1] != " ":
-                    res.append(i)
-        if line[i] in l_s:
-            if i != 0:
-                if line[i - 1] != " ":
-                    res.append(i)
-        if line[i] in r_s:
-            if i != len(line) - 1:
-                if line[i + 1] != " ":
-                    res.append(i)
-    return res
-
-
-def check_space(lines, block_lines, max_space, space_elements):
+def check_identificators(lines, block_lines):
+    camel_case_pattern = r'^[A-Za-z][a-zA-Z0-9]*$'
+    identifiers_pattern = r'\b[a-zA-Z]+\w*\b'
+    keywords = [
+        'and', 'array', 'begin', 'case', 'const', 'div', 'do', 'downto', 'else',
+        'end', 'file', 'for', 'function', 'goto', 'if', 'in', 'label', 'mod', 'nil',
+        'not', 'of', 'or', 'packed', 'procedure', 'program', 'record', 'repeat',
+        'set', 'then', 'to', 'type', 'unit', 'until', 'uses', 'var', 'while', 'with'
+    ]
+    error_string = ''
     errors = []
-    ind = 0
-    for line in lines:
-        ind += 1
-        line_err = check_space_line(line, space_elements)
-        if check_max_spaces(line, max_space):
-            errors.append(f"Space in too much in {ind} line\n")
-        for error in line_err:
-            if ind not in block_lines:
-                errors.append(
-                    f"Space error in {ind} line {error} pos by element {line[error]}\n")
+    for line_index, line in enumerate(lines):
+        identifiers = re.findall(identifiers_pattern, line)
+        for ident in identifiers:
+            if not re.match(camel_case_pattern, ident) and ident not in keywords:
+                error_string += f"incorrect identifier name {ident} (not in CamelCase)\n"
+        if line_index not in block_lines:
+            if error_string != '':
+                errors.append(error_string)
+        error_string = ''
     return errors
 
 
-def check_max_spaces(line, max_spaces):
-    for i in range(len(line)):
-        if line[i] != " ":
-            break
-    if " " * (max_spaces + 1) in line[i:]:
-        return True
-    return False
-
-
-def get_result(lines, max_space, block_lines):
+def get_result(lines, block_lines):
     splitted = immitate_readlines(lines)
-    print(check_space(splitted, block_lines, max_space, ['+', '-', '*', '/']))
+    print(check_identificators(splitted, block_lines))
 
 
 def test_readlines(filename):
@@ -67,10 +46,8 @@ def immitate_readlines(st):
     return splitted
 
 
-# get_result('''var n,    p1,p2:integer;''', 1, [])
+get_result('''CamelCased :=not_cCcC''', [])
 
-
-print(check_max_spaces("if (a != (b + c))", 1))
 
 """var n,p1,p2,p3,p4:integer;    
 begin
