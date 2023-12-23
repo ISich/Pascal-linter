@@ -2,7 +2,7 @@ const n = 10;
 var a:array[1..n] of integer;
 var i, j, x, No_camel:integer;
 begin
-    writeln('введите ', n, ' элементов массива');
+    writeln('пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ', n, ' пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ');
     for i:=1 to n do readln( a[i] );
 
     for i:=1 to n -1 do
@@ -15,6 +15,6 @@ begin
             end;
         end;
     end;
-    writeln('после сортировки:');
+    writeln('пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:');
     for i:=1 to n do writeln( a[i] );
 end.
