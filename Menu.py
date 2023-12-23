@@ -11,6 +11,7 @@ class Menu():
     def __init__(self):
         self.window = Tk()
         self.file_paths = list()
+        self.text_paths = Text(self.window, height=10, width=50)
         self.string_len, self.use_string_len = int(), StringVar(value="True")
         self.empty_lines, self.use_empty_lines = int(), StringVar(value="True")
         self.tabs_count, self.use_tabs_count = int(), StringVar(value="True")
@@ -22,7 +23,7 @@ class Menu():
 
     def menu(self, window):
         window.resizable(False, False)
-        window.geometry("400x550")
+        window.geometry("400x650")
         window.title("Linter")
         window.grab_set()
 
@@ -102,6 +103,7 @@ class Menu():
         entryblock = Entry(framel2, width=50)
         entryblock.pack(side='left', fill='x')
 
+
         result_button = Button(window, text="Result", font=("Roboto", 14), width=16,
                                command=lambda: self.__do_result(
             entryblock.get(),
@@ -113,12 +115,17 @@ class Menu():
 
         frame_btn = Frame(window)
         frame_btn.pack(fill='x', padx=5, pady=5)
-        btn_file = Button(frame_btn, text="Choose_files", font=("Roboto", 8), width=14,
+        btn_file = Button(frame_btn, text="Choose_files", font=("Roboto", 8), width=18,
                           command=lambda: self.__choose_files())
-        btn_file.pack(side=LEFT, pady=10, padx=50)
-        btn_folder = Button(frame_btn, text="Choose_folders", font=("Roboto", 8), width=14,
+        btn_file.pack(side=LEFT, pady=10, padx=10)
+        btn_folder = Button(frame_btn, text="Choose_folders", font=("Roboto", 8), width=18,
                             command=lambda: self.__choose_folder())
-        btn_folder.pack(side=LEFT, pady=10, padx=50)
+        btn_folder.pack(side=LEFT, pady=10, padx=10)
+        btn_clean = Button(frame_btn, text="Clean paths", font=("Roboto", 8), width=18,
+                            command=lambda: self.__clean_paths())
+        btn_clean.pack(side=LEFT, pady=10, padx=10)
+
+        self.text_paths.pack(side="left")
 
         self.mainloop(self.window)
 
@@ -129,12 +136,22 @@ class Menu():
         if filenames:
             self.file_paths += list(filenames)
         self.__remove_doubles_filenames()
+        self.text_paths.delete('1.0', END)
+        for path in self.file_paths:
+            self.text_paths.insert(END, path+'\n')
 
     def __choose_folder(self):
         directory = askdirectory(title="Открыть папку", initialdir="/")
         all_files = self.__get_all_files_in_folder(directory)
         self.file_paths += list(filter(lambda name: name.endswith(".pas"), all_files))
         self.__remove_doubles_filenames()
+        self.text_paths.delete('1.0', END)
+        for path in self.file_paths:
+            self.text_paths.insert(END, path+'\n')
+
+    def __clean_paths(self):
+        self.file_paths = []
+        self.text_paths.delete('1.0', END)
 
     def __get_all_files_in_folder(self, folder: str) -> [str]:
         file_list = []

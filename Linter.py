@@ -26,7 +26,7 @@ def check_tabs(file_path, err, block_lines, tabs):
                     st += 1
             line0 = "    " * tab_count + line[st:]
         if line != line0 and len(line.strip()) != 0 and ind + 1 not in block_lines:
-            errors.append(f"{file_path}: Tab error in {ind+1} line\n")
+            errors.append(f"Tab error in {ind+1} line\n")
 
         ind += 1
     return errors
@@ -49,11 +49,11 @@ def check_empty_lines(file_path, err, block_lines, between_func, posible):
             if empty and cur_emt != 0:
                 for i in range(cur_emt):
                     if i + 1 not in block_lines:
-                        errors.append(f"{file_path}: Empty string error in {i+1} line\n")
+                        errors.append(f"Empty string error in {i+1} line\n")
             elif cur_emt > posible:
                 for i in range(cur_emt - posible):
                     if ind-cur_emt+i+1 not in block_lines:
-                        errors.append(f"{file_path}: Empty string error in {ind-cur_emt+i+1} line\n")
+                        errors.append(f"Empty string error in {ind-cur_emt+i+1} line\n")
             cur_emt = 0
             empty = False
 
@@ -62,7 +62,7 @@ def check_empty_lines(file_path, err, block_lines, between_func, posible):
         cur_emt += 1
     for i in range(cur_emt):
         if len(lines)-cur_emt+i+2 not in block_lines:
-            errors.append(f"{file_path}: Empty string error in {len(lines)-cur_emt+i+2} line\n")
+            errors.append(f"Empty string error in {len(lines)-cur_emt+i+2} line\n")
     return errors
 
 
@@ -108,7 +108,7 @@ def check_space(file_path, err, block_lines, max_space, space_elements):
             errors.append(f"{file_path}: Space in too much in {ind} line\n")
         for error in line_err:
             if ind not in block_lines:
-                errors.append(f"{file_path}: Space error in {ind} line {error} pos by element {line[error]}\n")
+                errors.append(f"Space error in {ind} line {error} pos by element {line[error]}\n")
     return errors
 
 
@@ -123,7 +123,7 @@ def check_lines_len(file_path, err, block_lines, max_len):
             continue
         if check_line_len(line, max_len):
             if ind not in block_lines:
-                errors.append(f"{file_path}: {ind} line in too large: {len(line)} > {max_len}\n")
+                errors.append(f"{ind} line in too large: {len(line)} > {max_len}\n")
     return errors
 
 
@@ -150,7 +150,7 @@ def check_identificators(file_path, err, block_lines):
         identifiers = re.findall(identifiers_pattern, line)
         for ident in identifiers:
             if not re.match(camel_case_pattern, ident) and ident not in keywords:
-                error_string += f"{file_path}: incorrect identifier name {ident} (not in CamelCase)\n"
+                error_string += f"incorrect identifier name {ident} (not in CamelCase)\n"
         if line_index not in block_lines:
             errors.append(error_string)
         error_string = ''
@@ -160,23 +160,40 @@ def check_identificators(file_path, err, block_lines):
 def check_unused_ref(file_path, err, block_lines):
     with open(file_path, 'r') as file:
         lines = file.readlines()
-    errors = []
-    ind = 0
+    lines = "".join(lines).split("\n")
+    in_var_declaration = False
+    variables = {}
+
     for line in lines:
-        continue
-    return errors
+        stripped_line = line.strip().lower()
+        if stripped_line.startswith('var'):
+            in_var_declaration = True
+        elif stripped_line == "begin":
+            in_var_declaration = False
+
+        # Обрабатываем строки внутри блока объявления переменных
+        if in_var_declaration:
+            # Разбиваем строку на отдельные переменные
+            var_names = stripped_line.replace(':', ',').split(',')[:-1]
+            if stripped_line.startswith('var') and stripped_line != 'var':
+                var_names[0] = var_names[0][4:]
+            for var in var_names:
+                if var.strip():  # Игнорируем пустые строки
+                    variables[var.strip()] = False
+
+        # Проверяем использование переменных в остальной части кода
+        else:
+            for var in variables:
+                if var in stripped_line:
+                    variables[var] = True
+
+    # Возвращаем список неиспользуемых переменных
+    return [f"unused ref: {var}" for var, used in variables.items() if not used]
 
 
 def write_errors(err, errors):
     for error in errors:
         ind = 0
-        if '/' in error:
-            if error.index('/') < error.index('.'):
-                for i in range(len(error)):
-                    if error[i] == '/':
-                        ind = i + 1
-                    elif error[i] == '.':
-                        break
         err.write(error[ind:])
 
 
@@ -204,6 +221,7 @@ def linter_main(err, block_lines, bloc_lines_type, file_name,
                 max_space, use_max_space,
                 unused_ref):
     space_elements = ['+', '-', '*', '/']
+    err.write(file_name + "\n")
     if use_empty_count:
         write_errors(err, check_empty_lines(file_name, err, block_lines, 2, empty_lines))
     if use_tabs_count:
@@ -216,3 +234,4 @@ def linter_main(err, block_lines, bloc_lines_type, file_name,
         write_errors(err, check_identificators(file_name, err, block_lines))
     if unused_ref:
         write_errors(err, check_unused_ref(file_name, err, block_lines))
+    err.write("\n")
