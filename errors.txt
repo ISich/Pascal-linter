@@ -1,4 +1,4 @@
 Block lines is: 
-Space in too much in 5 line
-Space error in 8 line 18 pos by element -
-5 line in too large: 79 > 50
+
+test.pas: Space error in 8 line 18 pos by element -
+test.pas: incorrect identifier name No_camel (not in CamelCase)

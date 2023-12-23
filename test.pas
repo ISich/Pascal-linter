@@ -1,8 +1,8 @@
 const n = 10;
 var a:array[1..n] of integer;
-var i, j, x:integer;
+var i, j, x, No_camel:integer;
 begin
-    writeln('введите ', n, ' элементов массива')                             ;
+    writeln('введите ', n, ' элементов массива');
     for i:=1 to n do readln( a[i] );
 
     for i:=1 to n -1 do

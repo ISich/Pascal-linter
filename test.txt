@@ -1,9 +1,0 @@
-Program aaa;
-begin
-
-
-writeln(1,2 +        2)                                            ;
-    a_b := 1;
-    function notIn_camel_case(){}
-
-end
