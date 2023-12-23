@@ -1,2 +1,19 @@
 Block lines is: 
 
+test.pas: Space error in 8 line 18 pos by element -
+test.pas: 5 line in too large: 96 > 50
+test.pas: 18 line in too large: 64 > 50
+test.pas: incorrect identifier name No_camel (not in CamelCase)
+test2.pas: Tab error in 3 line
+test2.pas: Tab error in 4 line
+test2.pas: Tab error in 7 line
+test2.pas: Tab error in 8 line
+test2.pas: Tab error in 9 line
+test2.pas: Tab error in 10 line
+test2.pas: Tab error in 11 line
+test2.pas: Tab error in 12 line
+test2.pas: Tab error in 13 line
+test2.pas: Tab error in 14 line
+test2.pas: Space error in 13 line 16 pos by element ,
+test2.pas: incorrect identifier name I_ (not in CamelCase)
+test2.pas: incorrect identifier name I_ (not in CamelCase)

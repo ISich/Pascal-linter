@@ -10,7 +10,7 @@ from tkinter import Tk, messagebox
 class Menu():
     def __init__(self):
         self.window = Tk()
-        self.file_paths = []
+        self.file_paths = list()
         self.string_len, self.use_string_len = int(), StringVar(value="True")
         self.empty_lines, self.use_empty_lines = int(), StringVar(value="True")
         self.tabs_count, self.use_tabs_count = int(), StringVar(value="True")
@@ -127,14 +127,14 @@ class Menu():
         filenames = askopenfilenames(title="Открыть файлы", initialdir="/",
                                      filetypes=filetypes)
         if filenames:
-            self.file_paths = filenames
-            return True
-        return False
+            self.file_paths += list(filenames)
+        self.__remove_doubles_filenames()
 
     def __choose_folder(self):
         directory = askdirectory(title="Открыть папку", initialdir="/")
         all_files = self.__get_all_files_in_folder(directory)
         self.file_paths += list(filter(lambda name: name.endswith(".pas"), all_files))
+        self.__remove_doubles_filenames()
 
     def __get_all_files_in_folder(self, folder: str) -> [str]:
         file_list = []
@@ -151,6 +151,9 @@ class Menu():
                 self.string_len = int(value)
                 return True
         return False
+    
+    def __remove_doubles_filenames(self):
+        self.file_paths = list(dict.fromkeys(self.file_paths))
 
     def __check_entry_lines(self, value):
         if value.isdigit():
