@@ -23,6 +23,7 @@ def check_space_line(line, space_el, l_s=[], r_s=[',']):
                     res.append(i)
     return res
 
+
 def check_space(lines, block_lines, max_space, space_elements):
     errors = []
     ind = 0
@@ -37,6 +38,7 @@ def check_space(lines, block_lines, max_space, space_elements):
                     f"Space error in {ind} line {error} pos by element {line[error]}\n")
     return errors
 
+
 def check_max_spaces(line, max_spaces):
     for i in range(len(line)):
         if line[i] != " ":
@@ -45,9 +47,10 @@ def check_max_spaces(line, max_spaces):
         return True
     return False
 
-def get_result(lines, between_func, block_lines):
+
+def get_result(lines, max_space, block_lines):
     splitted = immitate_readlines(lines)
-    print(check_space(splitted, block_lines, "", between_func))
+    print(check_space(splitted, block_lines, max_space, ['+', '-', '*', '/']))
 
 
 def test_readlines(filename):
@@ -64,15 +67,15 @@ def immitate_readlines(st):
     return splitted
 
 
-get_result('''var n,p1,p2,p3,p4:integer;
-
-                   
-begin
-readln;
-end.''', 1, [3])
+# get_result('''var n,    p1,p2:integer;''', 1)
 
 
-"""var n,p1,p2,p3,p4:integer;          
+print(check_space_line('''var a: int;
+a := 3+ 1 *5 - 2/ 5;
+''', ['+', '-', '*', '/']))
+
+
+"""var n,p1,p2,p3,p4:integer;    
 begin
 readln;
     begin

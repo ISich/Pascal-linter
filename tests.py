@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import pytest
-from Linter import check_tabs, check_empty_lines, check_space
+from Linter import check_tabs, check_empty_lines, check_space, check_space_line
 import pdb
 
 
@@ -255,9 +255,57 @@ end.''', 0, [1, 2, 3, 4, 5], [])
     def test_empty_lines(self, file_value, possible, block_lines, expected):
         assert HelperTestingMethods.test_func(
             check_empty_lines, file_value, 'file_path', block_lines, "", possible) == expected
-        
+
+
 class TestCheckSpace:
-    
+
+    @pytest.mark.parametrize("line, expected", [
+        ("var a,b,c: int", [5, 7]),
+        ("var a,b, c: int", [5]),
+        ("var a, b, c: int", []),
+        ('''var a: int;
+a:=3 +1;
+''', [17]),
+        ('''var a: int;
+a:=3+ 1;
+''', [16]),
+        ('''var a: int;
+a:=3+ 1 *5 - 2;
+''', [16, 20]),
+        ('''var a: int;
+a := 3+ 1 *5 - 2/ 5;
+''', [18, 22, 28])
+    ])
+    def test_check_space_line(self, line, expected):
+        assert check_space_line(line, ['+', '-', '*', '/']) == expected
+
+    @pytest.mark.parametrize("file_value, max_space, block_lines, expected", [
+        ('''var n,p1,p2,p3,p4:integer;
+begin
+readln    ;
+end.''', 1, [], ['Space error in 1 line 5 pos by element ,\n', 'Space error in 1 line 8 pos by element ,\n', 'Space error in 1 line 11 pos by element ,\n', 'Space error in 1 line 14 pos by element ,\n', 'Space in too much in 3 line\n']),
+        ('''var n,p1,p2,p3,p4:integer;''', 1, [], ['Space error in 1 line 5 pos by element ,\n', 'Space error in 1 line 8 pos by element ,\n',
+         'Space error in 1 line 11 pos by element ,\n', 'Space error in 1 line 14 pos by element ,\n']),
+        ('''var n,p4:integer;''', 1, [], [
+         'Space error in 1 line 5 pos by element ,\n']),
+        ('''var n,    p1:integer;''', 1, [], ['Space in too much in 1 line\n']),
+        ('''var n,    p1,p2:integer;''', 1, [], [
+         'Space in too much in 1 line\n', 'Space error in 1 line 12 pos by element ,\n']),
+        ('''begin
+n :=  3;
+end.''', 1, [], ['Space in too much in 2 line\n']),
+        ('''begin
+n :=3;
+end.''', 1, [], []),
+        ('''begin
+n :=3;
+end     .''', 1, [], ['Space in too much in 3 line\n']),
+        ('''begin
+                n :=3;
+end.''', 1, [], []),
+        ('''var n,    p1,p2:integer;''', 1, [1], [
+            'Space in too much in 1 line\n', 'Space error in 1 line 12 pos by element ,\n'])
+    ])
     def test_spaces(self, file_value, max_space, block_lines, expected):
         space_elements = ['+', '-', '*', '/']
         assert HelperTestingMethods.test_func(
