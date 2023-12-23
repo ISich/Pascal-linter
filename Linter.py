@@ -107,7 +107,7 @@ def check_space(file_path, block_lines, max_space, space_elements):
         ind += 1
         line_err = check_space_line(line, space_elements)
         if check_max_spaces(line, max_space):
-            errors.append(f"{file_path}: Space in too much in {ind} line\n")
+            errors.append(f"Space in too much in {ind} line\n")
         for error in line_err:
             if ind not in block_lines:
                 errors.append(

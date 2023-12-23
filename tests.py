@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import pytest
-from Linter import check_tabs, check_empty_lines
+from Linter import check_tabs, check_empty_lines, check_space
 import pdb
 
 
@@ -255,6 +255,13 @@ end.''', 0, [1, 2, 3, 4, 5], [])
     def test_empty_lines(self, file_value, possible, block_lines, expected):
         assert HelperTestingMethods.test_func(
             check_empty_lines, file_value, 'file_path', block_lines, "", possible) == expected
+        
+class TestCheckSpace:
+    
+    def test_spaces(self, file_value, max_space, block_lines, expected):
+        space_elements = ['+', '-', '*', '/']
+        assert HelperTestingMethods.test_func(
+            check_space, file_value, 'file_path', block_lines, max_space, space_elements) == expected
 
 
 class HelperTestingMethods:
