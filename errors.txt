@@ -1,4 +1,24 @@
 Block lines is: 
 
 C:/Users/Acer/Desktop/Linter/Pascal-linter/test.pas
-unused ref: no_camel
+Space error in 9 line 18 pos by element -
+incorrect identifier name No_camel (not in CamelCase)
+unused ref: m 
+unused ref: no_camel 
+
+C:/Users/Acer/Desktop/Linter/Pascal-linter/test2.pas
+Tab error in 3 line
+Tab error in 4 line
+Tab error in 7 line
+Tab error in 8 line
+Tab error in 9 line
+Tab error in 10 line
+Tab error in 11 line
+Tab error in 12 line
+Tab error in 13 line
+Tab error in 14 line
+Space error in 13 line 16 pos by element ,
+incorrect identifier name I_ (not in CamelCase)
+incorrect identifier name I_ (not in CamelCase)
+unused ref: i_ 
+

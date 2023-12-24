@@ -372,11 +372,11 @@ class TestCheckIdentificators:
 
 class TestUnusedRefs:
     @pytest.mark.parametrize("file_value, block_lines, expected", [
-        ('''var a, b: integer;''', [], ['unused ref: a', 'unused ref: b']),
+        ('''var a, b: integer;''', [], ['unused ref: a \n', 'unused ref: b \n']),
         ('''var a, b: integer;
 begin
 writeln("");
-end.''', [], ['unused ref: a']),
+end.''', [], ['unused ref: a \n', 'unused ref: b \n']),
         ('''var a, b: integer;
 begin
 a:=1;
@@ -390,7 +390,7 @@ begin
 b :=3;
 writeln(n+ b);
 qwe[2] = 7;
-end.''', [], ['unused ref: a']),
+end.''', [], ['unused ref: a \n']),
         ('''var qwe: array[1..n] of integer;
 var asd: array[1..2] of integer;
 begin
