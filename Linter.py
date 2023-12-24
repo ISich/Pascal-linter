@@ -171,29 +171,39 @@ def check_unused_ref(file_path, block_lines):
 
     for line in lines:
         stripped_line = line.strip().lower()
-        if stripped_line.startswith('var'):
+        if stripped_line.startswith('var') or stripped_line.startswith('const'):
             in_var_declaration = True
         elif stripped_line == "begin":
             in_var_declaration = False
 
-        # ������������ ������ ������ ����� ���������� ����������
         if in_var_declaration:
-            # ��������� ������ �� ��������� ����������
             var_names = stripped_line.replace(':', ',').split(',')[:-1]
             if stripped_line.startswith('var') and stripped_line != 'var':
                 var_names[0] = var_names[0][4:]
+            if stripped_line.startswith('const') and stripped_line != 'const':
+                var_names = stripped_line.split('=')[:-1]
+                var_names[0] = var_names[0][6:].strip()
             for var in var_names:
-                if var.strip():  # ���������� ������ ������
+                if var.strip():
                     variables[var.strip()] = False
 
-        # ��������� ������������� ���������� � ��������� ����� ����
         else:
+            line0 = []
+            temp = ""
+            for symbol in stripped_line:
+                if symbol.isalpha():
+                    temp += symbol
+                else:
+                    line0.append(temp)
+                    temp = ""
+            line0.append(temp)
+
             for var in variables:
-                if var in stripped_line:
+                if var in line0:
                     variables[var] = True
 
     # ���������� ������ �������������� ����������
-    return [f"unused ref: {var}" for var, used in variables.items() if not used]
+    return [f"unused ref: {var} \n" for var, used in variables.items() if not used]
 
 
 def write_errors(err, errors):

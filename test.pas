@@ -1,8 +1,9 @@
 const n = 10;
+const m = 10;
 var a:array[1..n] of integer;
 var i, j, x, No_camel:integer;
 begin
-    writeln('������� ', n, ' ��������� �������');
+    writeln('writeln ', n, ' numbers count');
     for i:=1 to n do readln( a[i] );
 
     for i:=1 to n -1 do
@@ -15,6 +16,6 @@ begin
             end;
         end;
     end;
-    writeln('����� ����������:');
+    writeln('result numbers:');
     for i:=1 to n do writeln( a[i] );
 end.
