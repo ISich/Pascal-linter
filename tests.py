@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import pytest
 from Linter import check_tabs, check_empty_lines, check_space, check_space_line, check_max_spaces, check_lines_len
-from Linter import check_line_len, check_identificators
+from Linter import check_line_len, check_identificators, check_unused_ref
 import pdb
 
 
@@ -369,6 +369,39 @@ class TestCheckIdentificators:
     def test_check_lines_len(self, file_value, block_lines, expected):
         assert HelperTestingMethods.test_func(
             check_identificators, file_value, 'file_path', block_lines) == expected
+
+
+class TestUnusedRefs:
+    @pytest.mark.parametrize("file_value, block_lines, expected", [
+        ('''var a, b: integer;''', [], ['unused ref: a', 'unused ref: b']),
+        ('''var a, b: integer;
+begin
+writeln("");
+end.''', [], ['unused ref: a']),
+        ('''var a, b: integer;
+begin
+a:=1;
+b:=2;
+writeln(a -b);
+end.''', [], []),
+        ('''const n = 10;
+var a, b: integer;
+qwe: array[1..n] of integer
+begin
+b :=3;
+writeln(n+ b);
+qwe[2] = 7;
+end.''', [], ['unused ref: a']),
+        ('''var qwe: array[1..n] of integer;
+var asd: array[1..2] of integer;
+begin
+asd[1] :=3;
+qwe[2] = 7;
+end. ''', [], [])
+    ])
+    def test_unused_refs(self, file_value, block_lines, expected):
+        assert HelperTestingMethods.test_func(
+            check_unused_ref, file_value, 'file_path', block_lines) == expected
 
 
 class HelperTestingMethods:

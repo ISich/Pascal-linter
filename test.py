@@ -4,32 +4,41 @@ import os
 import re
 
 
-def check_identificators(lines, block_lines):
-    camel_case_pattern = r'^[A-Za-z][a-zA-Z0-9]*$'
-    identifiers_pattern = r'\b[a-zA-Z]+\w*\b'
-    keywords = [
-        'and', 'array', 'begin', 'case', 'const', 'div', 'do', 'downto', 'else',
-        'end', 'file', 'for', 'function', 'goto', 'if', 'in', 'label', 'mod', 'nil',
-        'not', 'of', 'or', 'packed', 'procedure', 'program', 'record', 'repeat',
-        'set', 'then', 'to', 'type', 'unit', 'until', 'uses', 'var', 'while', 'with'
-    ]
-    error_string = ''
-    errors = []
-    for line_index, line in enumerate(lines):
-        identifiers = re.findall(identifiers_pattern, line)
-        for ident in identifiers:
-            if not re.match(camel_case_pattern, ident) and ident not in keywords:
-                error_string += f"incorrect identifier name {ident} (not in CamelCase)\n"
-        if line_index not in block_lines:
-            if error_string != '':
-                errors.append(error_string)
-        error_string = ''
-    return errors
+def check_unused_ref(lines, block_lines):
+    lines = "".join(lines).split("\n")
+    in_var_declaration = False
+    variables = {}
+
+    for line in lines:
+        stripped_line = line.strip().lower()
+        if stripped_line.startswith('var'):
+            in_var_declaration = True
+        elif stripped_line == "begin":
+            in_var_declaration = False
+
+        # ������������ ������ ������ ����� ���������� ����������
+        if in_var_declaration:
+            # ��������� ������ �� ��������� ����������
+            var_names = stripped_line.replace(':', ',').split(',')[:-1]
+            if stripped_line.startswith('var') and stripped_line != 'var':
+                var_names[0] = var_names[0][4:]
+            for var in var_names:
+                if var.strip():  # ���������� ������ ������
+                    variables[var.strip()] = False
+
+        # ��������� ������������� ���������� � ��������� ����� ����
+        else:
+            for var in variables:
+                if var in stripped_line:
+                    variables[var] = True
+
+    # ���������� ������ �������������� ����������
+    return [f"unused ref: {var}" for var, used in variables.items() if not used]
 
 
 def get_result(lines, block_lines):
     splitted = immitate_readlines(lines)
-    print(check_identificators(splitted, block_lines))
+    print(check_unused_ref(splitted, block_lines))
 
 
 def test_readlines(filename):
@@ -46,7 +55,12 @@ def immitate_readlines(st):
     return splitted
 
 
-get_result('''CamelCased :=not_cCcC''', [])
+get_result('''var qwe: array[1..n] of integer;
+var asd: array[1..2] of integer;
+begin
+asd[1] :=3;
+qwe[2] = 7;
+end. ''', [])
 
 
 """var n,p1,p2,p3,p4:integer;    
