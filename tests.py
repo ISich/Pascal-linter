@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, mock_open, patch
 import pytest
 from Linter import check_tabs, check_empty_lines, check_space, check_space_line, check_max_spaces, check_lines_len
 from Linter import check_line_len, check_identificators, check_unused_ref
-import pdb
 
 
 class TestCheckTabs:
